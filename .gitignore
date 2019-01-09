@@ -1,0 +1,12 @@
+.DS_Store
+.vscode
+env.yml
+.webpack
+coverage
+
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless

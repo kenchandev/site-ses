@@ -1,0 +1,40 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.10
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: install-npm
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: check-format
+          command: npm run format:check
+      - run:
+          name: lint
+          command: npm run lint
+      - run:
+          name: test
+          command: npm test
+      - run:
+          name: code-coverage
+          command: npm run test:coverage
+      - run:
+          name: env-yml
+          command: |
+            echo -e "development:\n  APP_NAME: $APP_NAME_DEV\n  SEND_TO: $SEND_TO_DEV\n  REPLY_TO: $REPLY_TO_DEV\n  REGION: $REGION_DEV\n  DOMAIN: $DOMAIN_DEV" >> env.yml
+            echo -e "\n" >> env.yml
+            echo -e "production:\n  APP_NAME: $APP_NAME_PROD\n  SEND_TO: $SEND_TO_PROD\n  REPLY_TO: $REPLY_TO_PROD\n  REGION: $REGION_PROD\n  DOMAIN: $DOMAIN_PROD" >> env.yml
+      - run:
+          name: deploy
+          command: npm run deploy
+      - store_artifacts:
+          path: coverage
+          prefix: coverage
