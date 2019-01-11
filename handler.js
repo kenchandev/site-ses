@@ -5,12 +5,14 @@ if (typeof Promise === "undefined") {
   AWS.config.setPromisesDependency(require("bluebird"));
 }
 
+const { DOMAIN, REPLY_TO, SEND_TO } = process.env;
+
 function sendEmail(ses, formData) {
   const emailParams = {
-    Source: `"kenchandev.com" <${process.env.REPLY_TO}>`,
-    ReplyToAddresses: [process.env.REPLY_TO],
+    Source: `"${DOMAIN}" <${REPLY_TO}>`,
+    ReplyToAddresses: [REPLY_TO],
     Destination: {
-      ToAddresses: [process.env.SEND_TO]
+      ToAddresses: [SEND_TO]
     },
     Message: {
       Body: {
